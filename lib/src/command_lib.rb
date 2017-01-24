@@ -2,7 +2,7 @@ class WindowsCommand
   def run_command(command_text)
     command_output=`#{command_text}`
     puts command_output
-    return $CHILD_STATUS.exitstatus
+    return $?.exitstatus
   end
 end
 
