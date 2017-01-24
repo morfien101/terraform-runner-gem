@@ -16,9 +16,18 @@ class LinuxCommand
         begin
           stdout.each{|line| puts line}
         rescue Errno::EIO
-          unless (ec = PTY.check(pid, false)).nil?
-            return ec.exitstatus
+          # we seem to get into a race condition here waiting for the exit code
+          # for the command to be generated. We can just hang tight for a bit
+          # till it comes through. We will try 3 times and then exit with a error
+          # state should we not get one.
+          for i in 1..3
+            ec = PTY.check(pid, false)
+            break unless ec.nil?
+            sleep 1 if i < 3
           end
+          
+          return 1 if ec.nil?
+          return ec.exitstatus
         end
       end
     rescue PTY::ChildExited
