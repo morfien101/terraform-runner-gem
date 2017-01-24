@@ -27,7 +27,7 @@ module OS
   def self.locate(program_to_check)
     locate_command = self.windows? ? "where #{program_to_check}" : "which #{program_to_check}"
     location = `#{locate_command}`.chomp
-    unless $CHILD_STATUS.success?
+    unless $?.success?
       puts 'Could not find the terraform binary in the path'
       exit 1
     end
