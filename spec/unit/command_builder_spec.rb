@@ -20,6 +20,14 @@ describe 'CommandBuilder' do
       end
     end
 
+    describe 'quoted strings' do
+      it 'returns strings quoted if needed.' do
+        cmd = create_CommandBuilder('get', true, new_config, dummy_logger)
+        expect(cmd.send(:escape_values, 'test value')).to eq('"test value"')
+        expect(cmd.send(:escape_values, 'testvalue')).to eq('testvalue')
+      end
+    end
+
     describe 'action get' do
       it 'return full get command with true @module_updates' do
         cmd = create_CommandBuilder('get', true, new_config, dummy_logger)

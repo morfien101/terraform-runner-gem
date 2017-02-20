@@ -26,13 +26,18 @@ class CommandBuilder
     OS.locate('terraform')
   end
 
+  def escape_values(w)
+    return %Q<"#{w}"> if w.include?(" ")
+    return w
+  end
+
   def digest_inline_vars(vars)
     vars.map {|k,v|
       # TODO moved to the ConfigFile class
       if v =~ /^\$\{ENV/
         v=eval(v.gsub("${","").gsub("}",""))
       end
-      "-var #{k}=#{v}"
+      "-var #{k}=#{escape_values(v)}"
     }.join(" ") unless vars.nil? || vars.empty?#
   end
 
@@ -83,5 +88,5 @@ class CommandBuilder
   end
 
   private :join_text, :digest_inline_vars, :digest_var_files, :digest_custom_args
-  private :terraform_bin
+  private :terraform_bin, :escape_values
 end
