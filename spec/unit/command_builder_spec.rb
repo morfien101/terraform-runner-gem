@@ -46,6 +46,13 @@ describe 'CommandBuilder' do
         expect(cmd.tf_action_cmd).to eq(%Q</usr/bin/terraform destroy -var aws_ssh_key_path=sshkeypath -var aws_ssh_key_name=myawskey -var-file="#{Dir.pwd}/spec/mockdir/scripts/tfmockdir/mock_vars1.tfvars" -var-file="#{Dir.pwd}/spec/mockdir/scripts/tfmockdir/mock_vars2.tfvars" -parallelism=10 -force>)
       end
     end
+
+    describe 'action output' do
+      it 'must return the output command' do
+        cmd = create_CommandBuilder('output', nil, new_config, dummy_logger)
+        expect(cmd.tf_action_cmd).to eq('/usr/bin/terraform output')
+      end
+    end
   end
 
 end

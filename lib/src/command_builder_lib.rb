@@ -58,6 +58,12 @@ class CommandBuilder
   def tf_action_cmd
     tf_action_command = []
     tf_action_command << "#{terraform_bin} #{@action}"
+
+    # Early return if the action is output
+    if @action == 'output'
+      return join_text tf_action_command
+    end
+
     # Early return if action is get because we don't need the rest
     if @action == 'get'
       tf_action_command << '-update' if @module_updates
