@@ -15,8 +15,6 @@
 require 'optparse'
 # Gather the options
 class Options
-  VALID_ACTIONS = %w(plan apply destroy get).freeze
-
   def self.get_options(arguments)
     options = default_options()
     OptionParser.new do |opts|
