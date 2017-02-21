@@ -40,7 +40,7 @@ class InputChecker
   def validate_action(action)
     # Tests to check user in put
     @logger.debug('Checking the user input')
-    return "Invalid action: #{action}" unless Options::VALID_ACTIONS.include?(action.downcase)
+    return "Invalid action: #{action}" unless CommandBuilder::VALID_ACTIONS.include?(action.downcase)
   end
 
   def valid?

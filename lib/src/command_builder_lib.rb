@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VALID_ACTIONS = %w(plan apply destroy get output).freeze
+
 
 class CommandBuilder
+  VALID_ACTIONS = %w(plan apply destroy get output).freeze
+  
   def initialize(action, module_updates, config_file, logger)
     @action = action
     @module_updates = module_updates

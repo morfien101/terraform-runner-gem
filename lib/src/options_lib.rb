@@ -56,7 +56,7 @@ class Options
   end
 
   def self.actions(opts, options)
-    opts.on('-a', '--action action_type', String, "Terraform action: #{VALID_ACTIONS.join(', ')}") do |action|
+    opts.on('-a', '--action action_type', String, "Terraform action: #{CommandBuilder::VALID_ACTIONS.join(', ')}") do |action|
       # Validate the actions here ...
       options[:action] = action
     end
