@@ -16,7 +16,7 @@
 
 class CommandBuilder
   VALID_ACTIONS = %w(plan apply destroy get output).freeze
-  
+
   def initialize(action, module_updates, config_file, logger)
     @action = action
     @module_updates = module_updates
@@ -39,10 +39,12 @@ class CommandBuilder
     vars.map {|k,v|
       # TODO moved to the ConfigFile class
       if v =~ /^\$\{ENV/
+        vraw=v
         v=eval(v.gsub("${","").gsub("}",""))
+        logger.warn("#{vraw} does not have a value.") if v.nil?
       end
-      "-var #{k}=#{escape_values(v)}"
-    }.join(" ") unless vars.nil? || vars.empty?#
+      "-var #{k}=#{escape_values(v)}" unless v.nil?
+    }.join(" ") unless vars.nil? || vars.empty?
   end
 
   def digest_var_files(path,files)

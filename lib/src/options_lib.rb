@@ -83,7 +83,7 @@ class Options
 
   def self.version(opts)
     opts.on('-v', '--version', 'Display the version') do
-      puts VERSION
+      puts TerraformRunner::VERSION
       exit 0
     end
   end
