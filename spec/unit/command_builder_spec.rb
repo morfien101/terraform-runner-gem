@@ -25,6 +25,9 @@ describe 'CommandBuilder' do
         cmd = create_CommandBuilder('get', true, new_config, dummy_logger)
         expect(cmd.send(:escape_values, 'test value')).to eq('"test value"')
         expect(cmd.send(:escape_values, 'testvalue')).to eq('testvalue')
+        expect(cmd.send(:escape_values, '')).to eq('')
+        expect(cmd.send(:escape_values, nil)).to eq(nil)
+        expect(cmd.send(:escape_values, 123)).to eq(123)
       end
     end
 

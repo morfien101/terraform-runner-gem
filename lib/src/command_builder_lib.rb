@@ -31,7 +31,7 @@ class CommandBuilder
   end
 
   def escape_values(w)
-    return %Q<"#{w}"> if w.include?(" ")
+    return  %Q<"#{w}"> if w.respond_to?(:include?) && w.include?(" ")
     return w
   end
 
