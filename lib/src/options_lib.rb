@@ -16,11 +16,12 @@ require 'optparse'
 # Gather the options
 class Options
   def self.get_options(arguments)
-    options = default_options()
+    options = default_options
     OptionParser.new do |opts|
       banner_seperator(opts)
       config(opts, options)
       actions(opts, options)
+      custom_parameter(opts, options)
       modules(opts, options)
       prompts(opts, options)
       json_example(opts)
@@ -32,7 +33,7 @@ class Options
     options
   end
 
-  def self.default_options()
+  def self.default_options
     {
       silent: false,
       action: 'plan',
@@ -68,8 +69,15 @@ class Options
     end
   end
 
+  def self.custom_parameter(opts, options)
+    opts.on('-p', '--custom-parameters ARGS', String, 'Parameters that will be added as is to the Terraform run.',
+            'Presented as a comma sperated string "-arg1,-arg2"') do |s|
+      options[:custom_parameter] = s.respond_to?(:gsub) ? s.gsub(/ |\"/, '').split(',') : 'custom_parameter_failed'
+    end
+  end
+
   def self.prompts(opts, options)
-    opts.on('-f', '--force', 'No prompts') do |force|
+    opts.on('-f', '--force', 'No prompts') do
       options[:silent] = true
     end
   end

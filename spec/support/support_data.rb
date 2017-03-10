@@ -1,4 +1,4 @@
-DATA=<<-EOF
+DATA = <<-EOF.freeze
 {
   	"environment": "Running Environment",
 	  "tf_file_path":"/scripts/testdir",

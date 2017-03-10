@@ -13,7 +13,7 @@
 # limitations under the License.
 
 class InputChecker
-  def initialize(options,logger)
+  def initialize(options, logger)
     @logger = logger
     @options = options
     @errors = []
@@ -22,6 +22,7 @@ class InputChecker
   def input_check
     @errors << validate_config_file_supplied(@options[:config_file])
     @errors << validate_action(@options[:action])
+    @errors << validate_custom_parameters(@options[:custom_parameter])
     # Print errors and exit if there are errors
   end
 
@@ -43,12 +44,13 @@ class InputChecker
     return "Invalid action: #{action}" unless CommandBuilder::VALID_ACTIONS.include?(action.downcase)
   end
 
+  def validate_custom_parameters(parameters)
+    return 'Invalid custom parameters parameters.' if parameters.respond_to?(:include?) && parameters.include?('custom_parameter_failed')
+  end
+
   def valid?
     input_check
-    if @errors.compact.empty?
-      return true
-    else
-      EXIT.fatal_error(@logger,@errors, 1)
-    end
+    return true if @errors.compact.empty?
+    EXIT.fatal_error(@logger, @errors, 1)
   end
 end

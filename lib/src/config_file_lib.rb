@@ -26,25 +26,25 @@ class ConfigFile
   def convert_json_to_ruby(config_file)
     # Load the configuration file specified
     # TODO Handle the JSON convert failure
-    config_file_data = JSON.parse(IO.read(File.join(@base_dir,config_file)))
+    config_file_data = JSON.parse(IO.read(File.join(@base_dir, config_file)))
 
     @logger.debug("Collected config file: #{config_file_data}")
     return config_file_data
   end
 
   def file_exist(*args)
-    fp = File.expand_path(File.join(@base_dir,args))
+    fp = File.expand_path(File.join(@base_dir, args))
     return File.exist?(fp) ? nil : "File not found: #{fp}.\n"
   end
 
   def directory_exists(*args)
-    fp = File.expand_path(File.join(@base_dir,args))
+    fp = File.expand_path(File.join(@base_dir, args))
     return File.directory?(fp) ? nil : "Could not find directory: #{fp}.\n"
   end
 
   def convert_inline_var(hash)
-    hash.each do |key,v|
-      hash[key] = eval(v.gsub("${","").gsub("}","")) if v =~ /^\$\{ENV/ && v =~ /\}$/
+    hash.each do |key, v|
+      hash[key] = eval(v.delete('${}')) if v =~ /^\$\{ENV/ && v =~ /\}$/
     end unless hash.nil?
     return hash
   end
@@ -53,14 +53,13 @@ class ConfigFile
     errors = []
     # Is the directory and files stated in the config file available.
     @logger.debug('Is the variable file there?')
-    config_json['variable_files'].each{ |var_file|
-      errors << file_exist(config_json['variable_path'],var_file)
-    } unless config_json['variable_files'].nil?
+    config_json['variable_files'].each do |var_file|
+      errors << file_exist(config_json['variable_path'], var_file)
+    end unless config_json['variable_files'].nil?
 
     # Is the source directory there?
     @logger.debug('Is the source code dir there?')
     errors << directory_exists(config_json['tf_file_path'])
-    #binding.pry
     EXIT.fatal_error(@logger, errors, 1) unless errors.compact.empty?
 
     create_att_readers(config_json)

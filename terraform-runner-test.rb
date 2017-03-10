@@ -1,3 +1,4 @@
+#!/usr/bin/ruby
 # Copyright 2017 Randy Coburn
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class TerraformRunner
-  VERSION = '0.1.8'.freeze
-end
+require_relative 'lib/terraform_runner'
+
+# options = Options.get_options(ARGV)
+# puts options
+# logger = LoggerHelper.get_logger(options)
+# if InputChecker.new(options,logger).valid?
+#   runner = TerraformRunner.new(logger, options)
+#   runner.execute_commands()
+#   exit runner.tf_exit_code
+# end
