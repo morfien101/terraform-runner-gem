@@ -34,18 +34,22 @@ class LinuxCommand
           # for the command to be generated. We can just hang tight for a bit
           # till it comes through. We will try 3 times and then exit with a error
           # state should we not get one.
-          (1..3).each do |i|
-            ec = PTY.check(pid, false)
-            break unless ec.nil?
-            sleep 1 if i < 3
-          end
-
-          return 1 if ec.nil?
-          return ec.exitstatus
+          return get_exit_code(pid)
         end
       end
     rescue PTY::ChildExited
       @logger.fatal('The child proesses exited!')
     end
   end
+
+  def self.get_exit_code(pid)
+    (1..3).each do |i|
+      ec = PTY.check(pid, false)
+      # exitstatus returns an int which is the exit code.
+      return ec.exitstatus unless ec.nil?
+      sleep 1 if i < 3
+    end
+    return 1
+  end
+  private_class_method :get_exit_code
 end
