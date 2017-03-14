@@ -34,7 +34,9 @@ class LinuxCommand
           # for the command to be generated. We can just hang tight for a bit
           # till it comes through. We will try 3 times and then exit with a error
           # state should we not get one.
-          return get_exit_code(pid)
+
+          # TODO FIX THIS.!!
+          return self.class.get_exit_code(pid)
         end
       end
     rescue PTY::ChildExited
@@ -51,5 +53,6 @@ class LinuxCommand
     end
     return 1
   end
-  private_class_method :get_exit_code
+  # Making this private doesn't seem to work in the containter.
+  # private_class_method :get_exit_code
 end

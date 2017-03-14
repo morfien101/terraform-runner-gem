@@ -84,8 +84,8 @@ class TerraformRunner
     @logger.debug("Run the terraform state file command: #{@cmd_builder.tf_state_file_cmd}")
     cmd.run_command(@cmd_builder.tf_state_file_cmd)
     # Run the action specified
-    @logger.debug("Run the terraform get command to collect modules: #{command_builder.tf_module_get_cmd}") if @config_file['modules_required']
-    cmd.run_command(command_builder.tf_module_get_cmd) if @config_file.modules_required
+    @logger.debug("Run the terraform get command to collect modules: #{@cmd_builder.tf_module_get_cmd}") if @config_file.modules_required
+    cmd.run_command(@cmd_builder.tf_module_get_cmd) if @config_file.modules_required
     @logger.debug("Run the terraform action command: #{@cmd_builder.tf_action_cmd}")
     # Build up the terraform action command
     @tf_exit_code = cmd.run_command(@cmd_builder.tf_action_cmd)

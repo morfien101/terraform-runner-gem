@@ -122,7 +122,6 @@ class CommandBuilder
     tf_action_command << terraform_bin
     tf_action_command << action_builder_selector(@action)
     tf_action_command << add_custom_parameters
-    @logger.debug("Running command: #{tf_action_command}")
     return join_text tf_action_command
   end
 
@@ -131,7 +130,6 @@ class CommandBuilder
     @config_file.state_file['config'].each do |k, v|
       tf_state_file_command += " -backend-config=\"#{k}=#{v}\""
     end
-    @logger.debug("Running command: #{tf_state_file_command}")
     return tf_state_file_command
   end
 
