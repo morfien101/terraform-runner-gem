@@ -57,32 +57,71 @@ class CommandBuilder
   end
 
   def join_text(array)
-    array.join(' ')
+    array.join(' ').rstrip
   end
+
+  def action_builder_selector(action)
+    case action
+    when 'plan'
+      return make_terraform_plan
+    when 'apply'
+      return make_terraform_apply
+    when 'destroy'
+      return make_terraform_destroy
+    when 'get'
+      return make_terraform_get
+    when 'output'
+      return make_terraform_output
+    end
+  end
+
+  def command_flag_digester
+    retval = []
+    retval << digest_inline_vars(@config_file.inline_variables)
+    retval << digest_var_files(@config_file.variable_path, @config_file.variable_files)
+    retval << digest_custom_args(@config_file.custom_args)
+    retval
+  end
+
+  def make_terraform_plan
+    retval = ['plan']
+    retval << command_flag_digester
+    retval << '-detailed-exitcode'
+    retval
+  end
+
+  def make_terraform_apply
+    retval = ['apply']
+    retval << command_flag_digester
+  end
+
+  def make_terraform_destroy
+    retval = ['destroy']
+    retval << command_flag_digester
+    retval << '-force'
+    retval
+  end
+
+  def make_terraform_get
+    retval = ['get']
+    retval << '-update' if @module_updates
+    retval
+  end
+
+  def make_terraform_output
+    'output'
+  end
+
+  def add_custom_parameters
+    join_text @custom_parameter unless @custom_parameter.empty?
+  end
+
 
   def tf_action_cmd
     tf_action_command = []
-    tf_action_command << "#{terraform_bin} #{@action}"
-    tf_action_command << @custom_parameter.join(' ') unless @custom_parameter.empty?
-    # Early return if the action is output
-    return join_text tf_action_command if @action == 'output'
-
-    # Early return if action is get because we don't need the rest
-    if @action == 'get'
-      tf_action_command << '-update' if @module_updates
-      @logger.debug("Running command: #{tf_action_command}")
-      return join_text tf_action_command
-    end
-
-    tf_action_command << digest_inline_vars(@config_file.inline_variables)
-    tf_action_command << digest_var_files(@config_file.variable_path, @config_file.variable_files)
-    tf_action_command << digest_custom_args(@config_file.custom_args)
-
-    # we need the detailed exit code to see if there is any changes that
-    # need to be made to the environment.
-    tf_action_command << '-detailed-exitcode' if @action == 'plan'
-    tf_action_command << '-force' if @action == 'destroy'
-
+    tf_action_command << terraform_bin
+    tf_action_command << action_builder_selector(@action)
+    tf_action_command << add_custom_parameters
     @logger.debug("Running command: #{tf_action_command}")
     return join_text tf_action_command
   end
@@ -96,6 +135,11 @@ class CommandBuilder
     return tf_state_file_command
   end
 
+  def tf_module_get_cmd
+    join_text [terraform_bin, make_terraform_get]
+  end
+
   private :join_text, :digest_inline_vars, :digest_var_files, :digest_custom_args
   private :terraform_bin, :escape_values
+  private :make_terraform_plan, :make_terraform_apply, :make_terraform_destroy, :make_terraform_get, :make_terraform_output
 end

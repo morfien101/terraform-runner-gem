@@ -40,10 +40,8 @@ class TerraformRunner
     # Create the remote state files.
     @logger.debug('move into the working dir')
     Dir.chdir working_dir
-
-    @logger.debug("build up terraform remote state file command: #{@cmd_builder.tf_state_file_cmd}")
-    # Build up the terraform action command
-    @logger.debug("Build up Terraform action command: #{@cmd_builder.tf_action_cmd}")
+    # These are the commands that need to be run
+    # Each method will handle the command that it needs to run.
     prompt_to_destroy
     run_commands
   end
@@ -83,10 +81,13 @@ class TerraformRunner
     # Linux allows us to use a Pessudo shell, This will stream the output
     # Windows has to execute in a subprocess and puts the STDOUT at the end.
     # This can lead to a long wait before seeing anything in the console.
-    @logger.debug('Run the terraform state file command.')
+    @logger.debug("Run the terraform state file command: #{@cmd_builder.tf_state_file_cmd}")
     cmd.run_command(@cmd_builder.tf_state_file_cmd)
     # Run the action specified
-    @logger.debug('Run the terraform action command.')
+    @logger.debug("Run the terraform get command to collect modules: #{command_builder.tf_module_get_cmd}") if @config_file['modules_required']
+    cmd.run_command(command_builder.tf_module_get_cmd) if @config_file.modules_required
+    @logger.debug("Run the terraform action command: #{@cmd_builder.tf_action_cmd}")
+    # Build up the terraform action command
     @tf_exit_code = cmd.run_command(@cmd_builder.tf_action_cmd)
   end
 

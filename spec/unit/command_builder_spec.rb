@@ -1,6 +1,13 @@
 require 'spec_helper'
 
 describe 'CommandBuilder' do
+  describe '#tf_module_get_cmd' do
+    it 'must return the terraform get command' do
+      cmd = create_CommandBuilder({}, new_config_with_modules, dummy_logger)
+      expect(cmd.tf_module_get_cmd).to eq('/usr/bin/terraform get')
+    end
+  end
+
   describe '#tf_state_file_cmd' do
     describe 'full terraform remote state command' do
       it 'return state file command' do
@@ -67,7 +74,7 @@ describe 'CommandBuilder' do
       it 'must return the plan command with custom arguments' do
         options = { action: 'plan', custom_parameter: ['-destroy', '-no-color'] }
         cmd = create_CommandBuilder(options, new_config, dummy_logger)
-        expect(cmd.tf_action_cmd).to eq(%(/usr/bin/terraform plan -destroy -no-color -var aws_ssh_key_path=sshkeypath -var aws_ssh_key_name=myawskey -var-file="#{Dir.pwd}/spec/mockdir/scripts/tfmockdir/mock_vars1.tfvars" -var-file="#{Dir.pwd}/spec/mockdir/scripts/tfmockdir/mock_vars2.tfvars" -parallelism=10 -detailed-exitcode))
+        expect(cmd.tf_action_cmd).to eq(%(/usr/bin/terraform plan -var aws_ssh_key_path=sshkeypath -var aws_ssh_key_name=myawskey -var-file="#{Dir.pwd}/spec/mockdir/scripts/tfmockdir/mock_vars1.tfvars" -var-file="#{Dir.pwd}/spec/mockdir/scripts/tfmockdir/mock_vars2.tfvars" -parallelism=10 -detailed-exitcode -destroy -no-color))
       end
     end
   end

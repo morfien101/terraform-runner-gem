@@ -7,3 +7,7 @@ end
 def new_config
   return ConfigFile.new('spec/mockdir/scripts/configs/tf_mock.json', dummy_logger)
 end
+
+def new_config_with_modules
+  return ConfigFile.new('spec/mockdir/scripts/configs/tf_mock_modules.json', dummy_logger)
+end

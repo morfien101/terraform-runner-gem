@@ -15,7 +15,7 @@
 require 'json'
 class ConfigFile
   attr_reader :environment, :tf_file_path, :variable_path, :variable_files
-  attr_reader :inline_variables, :state_file, :custom_args
+  attr_reader :inline_variables, :state_file, :custom_args, :modules_required
 
   def initialize(configuration_location, logger)
     @logger = logger
@@ -73,6 +73,7 @@ class ConfigFile
     @inline_variables = convert_inline_var(config_json['inline_variables'])
     @state_file = config_json['state_file']
     @custom_args = config_json['custom_args']
+    @modules_required = config_json['modules_required'].nil? ? false : config_json['modules_required']
   end
 
   private :validate_config, :directory_exists, :file_exist, :convert_json_to_ruby

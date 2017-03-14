@@ -22,6 +22,7 @@ describe 'ConfigFile' do
       }
     )
     expect(config.custom_args).to eq(['-parallelism=10'])
+    expect(config.modules_required).to eq(false)
   end
 
   describe 'file does not exist' do
@@ -30,6 +31,12 @@ describe 'ConfigFile' do
       ENV['aws_ssh_key_path'] = 'sshkeypath'
       allow(File).to receive(:exist?).and_return(false)
       expect { ConfigFile.new('spec/mockdir/scripts/configs/tf_mock.json', logger) }.to raise_error SystemExit
+    end
+  end
+
+  describe 'Config file with modules_required set to true' do
+    it 'sets true if modules_required is true' do
+      expect(new_config_with_modules.modules_required).to eq(true)
     end
   end
 end
