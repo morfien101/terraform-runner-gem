@@ -10,10 +10,15 @@ describe 'CommandBuilder' do
 
   describe '#tf_state_file_cmd' do
     describe 'full terraform remote state command' do
+      #it 'return state file command' do
+      #  cmd = create_CommandBuilder({}, new_config, dummy_logger)
+      #  expect(cmd.tf_state_file_cmd).to eq('/usr/bin/terraform remote config -backend=s3 -backend-config="region=eu-west-1" -backend-config="bucket=terraform-bucket" -backend-config="key=path/to/terraform.tfstate"')
+      #end
       it 'return state file command' do
         cmd = create_CommandBuilder({}, new_config, dummy_logger)
-        expect(cmd.tf_state_file_cmd).to eq('/usr/bin/terraform remote config -backend=s3 -backend-config="region=eu-west-1" -backend-config="bucket=terraform-bucket" -backend-config="key=path/to/terraform.tfstate"')
+        expect(cmd.tf_state_file_cmd).to eq('/usr/bin/terraform init')
       end
+
     end
   end
 
