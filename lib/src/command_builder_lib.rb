@@ -128,9 +128,9 @@ class CommandBuilder
   def tf_state_file_cmd
     tf_state_file_command = "#{terraform_bin} init"
     #tf_state_file_command = "#{terraform_bin} remote config -backend=#{@config_file.state_file['type']}"
-    #@config_file.state_file['config'].each do |k, v|
-    #  tf_state_file_command += " -backend-config=\"#{k}=#{v}\""
-    #end
+    @config_file.state_file['config'].each do |config, value|
+      tf_state_file_command += " -backend-config=\"#{config}=#{value}\""
+    end unless @config_file.state_file.nil?
     return tf_state_file_command
   end
 

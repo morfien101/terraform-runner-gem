@@ -4,10 +4,18 @@ def create_CommandBuilder(options, config_file, logger)
   return cmd
 end
 
+def generate_config(tf_file)
+  return ConfigFile.new("spec/mockdir/scripts/configs/#{tf_file}", dummy_logger)
+end
+
 def new_config
-  return ConfigFile.new('spec/mockdir/scripts/configs/tf_mock.json', dummy_logger)
+  return generate_config 'tf_mock.json'
 end
 
 def new_config_with_modules
-  return ConfigFile.new('spec/mockdir/scripts/configs/tf_mock_modules.json', dummy_logger)
+  return generate_config 'tf_mock_modules.json'
+end
+
+def new_config_with_no_backend
+  return generate_config 'tf_mock_no_backend.json'
 end
