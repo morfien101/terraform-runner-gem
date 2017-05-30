@@ -69,6 +69,12 @@ class Options
     end
   end
 
+  def self.custom_command(opts, options)
+    opts.on('--custom-command', 'Allows you to run custom commands on the terraform run phase. Encase spaces in quotes.') do |cc|
+      options[:custom_command] = cc
+    end
+  end
+
   def self.custom_parameter(opts, options)
     opts.on('-p', '--custom-parameters ARGS', String, 'Parameters that will be added as is to the Terraform run.',
             'Presented as a comma sperated string "-arg1,-arg2"') do |s|

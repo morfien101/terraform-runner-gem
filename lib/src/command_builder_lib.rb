@@ -22,6 +22,7 @@ class CommandBuilder
     @base_dir = Dir.pwd
     @config_file = config_file
     @logger = logger
+    @options = options
   end
 
   # Gives us the location of the terraform bin file based on the running OS
@@ -72,6 +73,8 @@ class CommandBuilder
       return make_terraform_get
     when 'output'
       return make_terraform_output
+    when 'custom'
+      return make_terraform_custom
     end
   end
 
@@ -112,26 +115,28 @@ class CommandBuilder
     'output'
   end
 
+  def make_terraform_custom
+    @options[:custom_command]
+  end
+
   def add_custom_parameters
     join_text @custom_parameter unless @custom_parameter.empty?
   end
-
 
   def tf_action_cmd
     tf_action_command = []
     tf_action_command << terraform_bin
     tf_action_command << action_builder_selector(@action)
-    tf_action_command << add_custom_parameters
-    return join_text tf_action_command
+    tf_action_command << add_custom_parameters if @options[:custom_command].nil?
+    join_text tf_action_command
   end
 
   def tf_state_file_cmd
     tf_state_file_command = "#{terraform_bin} init"
-    #tf_state_file_command = "#{terraform_bin} remote config -backend=#{@config_file.state_file['type']}"
     @config_file.state_file['config'].each do |config, value|
       tf_state_file_command += " -backend-config=\"#{config}=#{value}\""
     end unless @config_file.state_file.nil?
-    return tf_state_file_command
+    tf_state_file_command
   end
 
   def tf_module_get_cmd

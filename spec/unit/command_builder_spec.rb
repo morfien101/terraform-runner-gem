@@ -83,5 +83,13 @@ describe 'CommandBuilder' do
         expect(cmd.tf_action_cmd).to eq(%(/usr/bin/terraform plan -var aws_ssh_key_path=sshkeypath -var aws_ssh_key_name=myawskey -var-file="#{Dir.pwd}/spec/mockdir/scripts/tfmockdir/mock_vars1.tfvars" -var-file="#{Dir.pwd}/spec/mockdir/scripts/tfmockdir/mock_vars2.tfvars" -parallelism=10 -detailed-exitcode -destroy -no-color))
       end
     end
+
+    describe 'action custom' do
+      it 'must return exactly what the user specifies with no custom_parameters added' do
+        options = { action: 'custom', custom_command: 'silly bananas' , custom_parameter: ['-destroy', '-no-color'] }
+        cmd = create_CommandBuilder(options, new_config, dummy_logger)
+        expect(cmd.tf_action_cmd).to eq('/usr/bin/terraform silly bananas')
+      end
+    end
   end
 end
