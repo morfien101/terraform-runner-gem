@@ -17,4 +17,19 @@ describe 'TerraformRunner:' do
       expect { tr.send(:prompt_to_destroy) }.to raise_error SystemExit
     end
   end
+
+  describe 'create directory must output the name of the directory' do
+    it 'the output must be the mocked name.' do
+      epoc = Time.now().to_i
+      dirname = "terraform-runner-working-dir-#{epoc}"
+      allow(FileUtils).to receive(:mkdir_p).and_return(true)
+
+      opts = Options.get_options(['-a', 'plan', '-c', config_file_string])
+      logger = LoggerHelper.get_logger(opts)
+      tr = TerraformRunner.new(logger, opts)
+
+      expect(logger).to receive(:info).with(/#{dirname}/)
+      tr.send(:make_working_dir, dirname)
+    end
+  end
 end

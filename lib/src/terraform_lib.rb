@@ -62,6 +62,7 @@ class TerraformRunner
   end
 
   def make_working_dir(dir)
+    @logger.info("Using directory: #{dir}")
     FileUtils.mkdir_p dir
   end
 
