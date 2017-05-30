@@ -13,5 +13,5 @@
 # limitations under the License.
 
 class TerraformRunner
-  VERSION = '0.1.12'.freeze
+  VERSION = '0.1.13'.freeze
 end
