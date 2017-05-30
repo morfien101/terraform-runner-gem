@@ -33,6 +33,26 @@ describe 'Options' do
       it 'displays help and exits the program' do
         expect { Options.get_options(['-h']) }.to raise_error SystemExit
       end
+
+      it 'displays help for each available flag' do
+        def run_help
+          expect {
+            begin Options.get_options(['-h'])
+            rescue SystemExit
+            end
+          }
+        end
+
+        run_help.to output(/-c, --config-file/).to_stdout
+        run_help.to output(/-a, --action/).to_stdout
+        run_help.to output(/-p, --custom-parameters/).to_stdout
+        run_help.to output(/--custom-command/).to_stdout
+        run_help.to output(/--custom-command-vars/).to_stdout
+        run_help.to output(/--update-modules/).to_stdout
+        run_help.to output(/--json-example/).to_stdout
+        run_help.to output(/-v, --version/).to_stdout
+        run_help.to output(/--debug/).to_stdout
+      end
     end
   end
 end

@@ -22,6 +22,8 @@ class Options
       config(opts, options)
       actions(opts, options)
       custom_parameter(opts, options)
+      custom_command(opts, options)
+      custom_command_vars(opts, options)
       modules(opts, options)
       prompts(opts, options)
       json_example(opts)
@@ -39,7 +41,8 @@ class Options
       action: 'plan',
       debug: false,
       create_json: false,
-      module_updates: false
+      module_updates: false,
+      custom_command_vars: false,
     }
   end
 
@@ -70,8 +73,16 @@ class Options
   end
 
   def self.custom_command(opts, options)
-    opts.on('--custom-command', 'Allows you to run custom commands on the terraform run phase. Encase spaces in quotes.') do |cc|
+    opts.on('--custom-command', String, 'Allows you to run custom commands on the Terraform run phase.',
+            'Encase spaces in quotes.',
+            'Example: "taint -allow-missing"') do |cc|
       options[:custom_command] = cc
+    end
+  end
+
+  def self.custom_command_vars(opts, options)
+    opts.on('--custom-command-vars', 'Add the variables from the json file to the end of the custom command.') do
+      options[:custom_command_vars] = true
     end
   end
 

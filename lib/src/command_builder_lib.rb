@@ -116,7 +116,10 @@ class CommandBuilder
   end
 
   def make_terraform_custom
-    @options[:custom_command]
+    retval = []
+    retval << @options[:custom_command]
+    retval << command_flag_digester if @options[:custom_command_vars]
+    retval
   end
 
   def add_custom_parameters

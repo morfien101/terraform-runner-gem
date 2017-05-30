@@ -67,7 +67,7 @@ class TerraformRunner
   end
 
   def prompt_to_destroy
-    if @action.downcase == 'destroy' && !@execute_silently
+    if @action.casecmp('destroy') && !@execute_silently
       puts %(Please type 'yes' to destroy your stack. Only yes will be accepted.)
       input = gets.chomp
       return if input == 'yes'
