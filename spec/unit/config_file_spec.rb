@@ -27,9 +27,10 @@ describe 'ConfigFile' do
 
   describe 'file does not exist' do
     it 'exits with wonky data' do
-      logger = dummy_logger
+      logger = LoggerHelper.get_logger('debug' => false)
       ENV['aws_ssh_key_path'] = 'sshkeypath'
       allow(File).to receive(:exist?).and_return(false)
+      expect(logger).to receive(:fatal).with(/.*/)
       expect { ConfigFile.new('spec/mockdir/scripts/configs/tf_mock.json', logger) }.to raise_error SystemExit
     end
   end

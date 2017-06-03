@@ -42,7 +42,7 @@ class TerraformRunner
     Dir.chdir working_dir
     # These are the commands that need to be run
     # Each method will handle the command that it needs to run.
-    prompt_to_destroy
+    prompt_to_destroy if @action.casecmp('destroy') && !@execute_silently
     run_commands
   end
 
@@ -57,8 +57,18 @@ class TerraformRunner
   end
 
   def copy_files_to_working_directory(working_dir)
-    @logger.debug('Ship souce code to the running folder')
-    FileUtils.cp_r("#{File.expand_path(File.join(@base_dir, @config_file.tf_file_path))}/.", working_dir, verbose: @debug)
+    # Copy the Terraform code to the working directory
+    sc_src = "#{File.expand_path(File.join(@base_dir, @config_file.tf_file_path))}/."
+    @logger.debug("Ship souce code to #{working_dir}")
+    FileUtils.cp_r(sc_src, working_dir, verbose: @debug)
+
+    # Copy the modules to the working directory also if needed.
+    if config_file['local_modules']['enabled']
+      module_src = "#{File.expand_path(File.join(@base_dir, @config_file['local_modules']['src_path']))}/."
+      modules_dst = File.join(working_dir,@config_file['local_modules']['dst_path'])
+      @logger.debug("Ship modules to #{modules_dst}")
+      FileUtils.cp_r(module_src, modules_dst, verbose: @debug)
+    end
   end
 
   def make_working_dir(dir)
@@ -67,13 +77,11 @@ class TerraformRunner
   end
 
   def prompt_to_destroy
-    if @action.casecmp('destroy') && !@execute_silently
-      puts %(Please type 'yes' to destroy your stack. Only yes will be accepted.)
-      input = gets.chomp
-      return if input == 'yes'
-      puts "#{input} was not accepted. Exiting for safety!"
-      exit 1
-    end
+    puts %(Please type 'yes' to destroy your stack. Only yes will be accepted.)
+    input = gets.chomp
+    return if input == 'yes'
+    puts "#{input} was not accepted. Exiting for safety!"
+    exit 1
   end
 
   def run_commands
@@ -86,7 +94,7 @@ class TerraformRunner
     cmd.run_command(@cmd_builder.tf_state_file_cmd)
     # Run the action specified
     @logger.debug("Run the terraform get command to collect modules: #{@cmd_builder.tf_module_get_cmd}") if @config_file.modules_required
-    cmd.run_command(@cmd_builder.tf_module_get_cmd) if @config_file.modules_required
+    cmd.run_command(@cmd_builder.tf_module_get_cmd) if @config_file.modules_required || @config_file.local_modules['enabled']
     @logger.debug("Run the terraform action command: #{@cmd_builder.tf_action_cmd}")
     # Build up the terraform action command
     @tf_exit_code = cmd.run_command(@cmd_builder.tf_action_cmd)

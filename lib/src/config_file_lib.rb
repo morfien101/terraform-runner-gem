@@ -20,16 +20,27 @@ class ConfigFile
   def initialize(configuration_location, logger)
     @logger = logger
     @base_dir = Dir.pwd
-    validate_config(convert_json_to_ruby(configuration_location))
+    convert_json_to_ruby(configuration_location)
+    create_att_readers() if validate_config()
+  end
+
+  def create_att_readers()
+    @environment = @config_json['environment']
+    @tf_file_path = @config_json['tf_file_path']
+    @variable_path = @config_json['variable_path']
+    @variable_files = @config_json['variable_files']
+    @inline_variables = convert_inline_var(@config_json['inline_variables'])
+    @state_file = @config_json['state_file']
+    @custom_args = @config_json['custom_args']
+    @modules_required = @config_json['modules_required'].nil? ? false : @config_json['modules_required']
+    @local_modules = @config_json['local_modules'].nil? ? { 'enabled' => false } : @config_json['local_modules']
   end
 
   def convert_json_to_ruby(config_file)
     # Load the configuration file specified
     # TODO Handle the JSON convert failure
-    config_file_data = JSON.parse(IO.read(File.join(@base_dir, config_file)))
-
-    @logger.debug("Collected config file: #{config_file_data}")
-    return config_file_data
+    @config_json = JSON.parse(IO.read(File.join(@base_dir, config_file)))
+    @logger.debug("Collected config file: #{@config_file_data}")
   end
 
   def file_exist(*args)
@@ -49,33 +60,59 @@ class ConfigFile
     return hash
   end
 
-  def validate_config(config_json)
+  def validate_config
     errors = []
-    # Is the directory and files stated in the config file available.
-    @logger.debug('Is the variable file there?')
-    config_json['variable_files'].each do |var_file|
-      errors << file_exist(config_json['variable_path'], var_file)
-    end unless config_json['variable_files'].nil?
+    # We need to set this default value for the logic to work.
+    @config_json['local_modules'] = { 'enabled' => false } if @config_json['local_modules'].nil?
 
+    errors << required_values
     # Is the source directory there?
     @logger.debug('Is the source code dir there?')
-    errors << directory_exists(config_json['tf_file_path'])
-    EXIT.fatal_error(@logger, errors, 1) unless errors.compact.empty?
+    errors << directory_exists(@config_json['tf_file_path']) unless @config_json['tf_file_path'].nil?
+    errors << directory_exists(@config_json['variable_path']) unless @config_json['variable_path'].nil?
+    errors << directory_exists(@config_json['local_modules']['src_path']) if @config_json['local_modules']['enabled']
 
-    create_att_readers(config_json)
+    # Is the directory and files stated in the config file available.
+    errors << validate_variable_files(@config_json['variable_files']) unless @config_json['variable_files'].nil?
+
+    if errors.flatten!.compact!.empty?
+      true
+    else
+      EXIT.fatal_error(@logger, errors, 1)
+    end
   end
 
-  def create_att_readers(config_json)
-    @environment = config_json['environment']
-    @tf_file_path = config_json['tf_file_path']
-    @variable_path = config_json['variable_path']
-    @variable_files = config_json['variable_files']
-    @inline_variables = convert_inline_var(config_json['inline_variables'])
-    @state_file = config_json['state_file']
-    @custom_args = config_json['custom_args']
-    @modules_required = config_json['modules_required'].nil? ? false : config_json['modules_required']
+  def validate_variable_files(var_files)
+    errors = []
+    @logger.debug('Is the variable file there?')
+    var_files.each do |var_file|
+      errors << file_exist(@config_json['variable_path'], var_file)
+    end
+    errors
+  end
+
+  def required_values
+    errors = []
+    # The following values are required.
+    errors << err_if_nil(@config_json['tf_file_path'],
+              'tf_file_path is a required value in the json file.'
+              )
+    errors << err_if_nil(@config_json['state_file'],
+              'state_file is a required block of values in the json file.'
+              )
+    errors << err_if_nil(@config_json['local_modules']['src_path'],
+              'local_modules - src_path is a required value when local modules is endabled.'
+              ) if @config_json['local_modules']['enabled']
+    errors << err_if_nil(@config_json['local_modules']['dst_path'],
+              'local_modules - dst_path is a required value when local modules is endabled.'
+              ) if @config_json['local_modules']['enabled']
+    errors
+  end
+
+  def err_if_nil(value, message)
+    message if value.nil?
   end
 
   private :validate_config, :directory_exists, :file_exist, :convert_json_to_ruby
-  private :convert_inline_var
+  private :convert_inline_var, :required_values, :validate_variable_files, :err_if_nil
 end

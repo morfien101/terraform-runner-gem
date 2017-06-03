@@ -57,7 +57,7 @@ module EXIT
   def self.fatal_error(logger, messages, exit_code)
     # TODO: make a log level fatal
     messages = messages.join("\n") if messages.is_a?(Array)
-    logger.warn(messages)
+    logger.fatal(messages)
     exit exit_code
   end
 end

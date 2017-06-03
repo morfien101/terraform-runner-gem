@@ -139,6 +139,11 @@ class Options
     }
   },
   "modules_requried": false,
+  "local_modules": {
+    "enabled": true,
+    "src_path": "path/modules",
+    "dst_path": "path/modules"
+  }
   "custom_args":["-parallelism=10"]
 }
 EOF
