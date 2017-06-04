@@ -31,6 +31,7 @@ class TerraformRunner
 
   def execute_commands
     # Is the directory there?
+    
     # Create a unique directory each time.
     working_dir = create_working_directory
 
@@ -49,8 +50,10 @@ class TerraformRunner
   def create_working_directory
     # Create/Clean the working directory
     @logger.debug('Setup working directory')
-    epoch = Time.now.to_i
-    working_dir = File.expand_path(File.join(@base_dir, "terraform-runner-working-dir-#{epoch}"))
+    working_dir = File.expand_path(File.join(@base_dir, 'terraform-runner-working-dir'))
+
+    FileUtils.rm_rf(working_dir) if Dir.exist?(working_dir)
+
     @logger.debug("Create directory #{working_dir}")
     make_working_dir(working_dir)
     working_dir
@@ -93,8 +96,6 @@ class TerraformRunner
     @logger.debug("Run the terraform state file command: #{@cmd_builder.tf_state_file_cmd}")
     cmd.run_command(@cmd_builder.tf_state_file_cmd)
     # Run the action specified
-    @logger.debug("Run the terraform get command to collect modules: #{@cmd_builder.tf_module_get_cmd}") if @config_file.modules_required
-    cmd.run_command(@cmd_builder.tf_module_get_cmd) if @config_file.modules_required || @config_file.local_modules['enabled']
     @logger.debug("Run the terraform action command: #{@cmd_builder.tf_action_cmd}")
     # Build up the terraform action command
     @tf_exit_code = cmd.run_command(@cmd_builder.tf_action_cmd)

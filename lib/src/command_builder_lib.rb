@@ -13,7 +13,7 @@
 # limitations under the License.
 
 class CommandBuilder
-  VALID_ACTIONS = %w(plan apply destroy get output).freeze
+  VALID_ACTIONS = %w(plan apply destroy output).freeze
 
   def initialize(options, config_file, logger)
     @action = options[:action]

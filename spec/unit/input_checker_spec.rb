@@ -18,12 +18,12 @@ describe 'InputChecker' do
     it 'must exit if action is invalid' do
       ic = InputChecker.new(nil, dummy_logger)
       expect(ic.send(:validate_action, 'trash')).to eq('Invalid action: trash')
+      expect(ic.send(:validate_action, 'get')).to_not eq(nil)
     end
 
     it 'must return nil if the value is correct' do
       ic = InputChecker.new(nil, dummy_logger)
       expect(ic.send(:validate_action, 'plan')).to eq(nil)
-      expect(ic.send(:validate_action, 'get')).to eq(nil)
       expect(ic.send(:validate_action, 'destroy')).to eq(nil)
       expect(ic.send(:validate_action, 'apply')).to eq(nil)
     end

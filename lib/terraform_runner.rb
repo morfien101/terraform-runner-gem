@@ -27,4 +27,3 @@ require_relative 'src/launcher'
 require_relative 'src/version'
 
 require 'fileutils'
-require 'time'

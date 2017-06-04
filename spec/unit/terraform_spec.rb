@@ -33,7 +33,7 @@ describe 'TerraformRunner:' do
     end
   end
 
-  describe 'must run terraform get' do
+  describe 'must run terraform init' do
     def setup_get_test(json_file)
       testecho = TestEcho.new()
       allow(OS).to receive(:command).and_return(testecho)
@@ -44,12 +44,11 @@ describe 'TerraformRunner:' do
       tr = TerraformRunner.new(logger, opts)
       return testecho, tr
     end
-    
+
     it 'if local_modules is enabled' do
       testecho, tr = setup_get_test('tf_mock_local_modules.json')
 
       expect(testecho).to receive(:run_command).with('terraform init')
-      expect(testecho).to receive(:run_command).with('terraform get')
       expect(testecho).to receive(:run_command).with('terraform plan')
       tr.send(:run_commands)
     end
@@ -58,7 +57,6 @@ describe 'TerraformRunner:' do
       testecho, tr = setup_get_test('tf_mock_modules.json')
 
       expect(testecho).to receive(:run_command).with('terraform init')
-      expect(testecho).to receive(:run_command).with('terraform get')
       expect(testecho).to receive(:run_command).with('terraform plan')
       tr.send(:run_commands)
     end
