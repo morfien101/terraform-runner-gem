@@ -16,6 +16,7 @@ require 'json'
 class ConfigFile
   attr_reader :environment, :tf_file_path, :variable_path, :variable_files
   attr_reader :inline_variables, :state_file, :custom_args, :modules_required
+  attr_reader :local_modules
 
   def initialize(configuration_location, logger)
     @logger = logger

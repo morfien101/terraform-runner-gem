@@ -32,4 +32,43 @@ describe 'TerraformRunner:' do
       tr.send(:make_working_dir, dirname)
     end
   end
+
+  describe 'must run terraform get' do
+    def setup_get_test(json_file)
+      testecho = TestEcho.new()
+      allow(OS).to receive(:command).and_return(testecho)
+      allow(CommandBuilder).to receive(:new).and_return(TestEchoCommand.new())
+
+      opts = Options.get_options(['-a', 'plan', '-c', "spec/mockdir/scripts/configs/#{json_file}"])
+      logger = LoggerHelper.get_logger(opts)
+      tr = TerraformRunner.new(logger, opts)
+      return testecho, tr
+    end
+    
+    it 'if local_modules is enabled' do
+      testecho, tr = setup_get_test('tf_mock_local_modules.json')
+
+      expect(testecho).to receive(:run_command).with('terraform init')
+      expect(testecho).to receive(:run_command).with('terraform get')
+      expect(testecho).to receive(:run_command).with('terraform plan')
+      tr.send(:run_commands)
+    end
+
+    it 'if modules_required is enabled' do
+      testecho, tr = setup_get_test('tf_mock_modules.json')
+
+      expect(testecho).to receive(:run_command).with('terraform init')
+      expect(testecho).to receive(:run_command).with('terraform get')
+      expect(testecho).to receive(:run_command).with('terraform plan')
+      tr.send(:run_commands)
+    end
+
+    it 'only if required' do
+      testecho, tr = setup_get_test('tf_mock.json')
+
+      expect(testecho).to receive(:run_command).with('terraform init')
+      expect(testecho).to receive(:run_command).with('terraform plan')
+      tr.send(:run_commands)
+    end
+  end
 end

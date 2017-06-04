@@ -143,7 +143,7 @@ class Options
     "enabled": true,
     "src_path": "path/modules",
     "dst_path": "path/modules"
-  }
+  },
   "custom_args":["-parallelism=10"]
 }
 EOF

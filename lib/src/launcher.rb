@@ -12,19 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Bring in our source files
-require_relative 'src/modules_lib'
-require_relative 'src/logger_lib'
-require_relative 'src/options_lib'
-require_relative 'src/input_checker'
-require_relative 'src/command_builder_lib'
-require_relative 'src/command_lib'
-require_relative 'src/config_file_lib'
-require_relative 'src/terraform_lib'
-require_relative 'src/launcher'
+class TerraformLaunchPad
+  def run
+    options, logger = pre_flight_checks()
+    exit TerraformRunner.new(logger, options).execute_commands().tf_exit_code
+  end
 
-# The version of the program is in here.
-require_relative 'src/version'
+  def pre_flight_checks
+    options = Options.get_options(ARGV)
+    logger = LoggerHelper.get_logger(options)
 
-require 'fileutils'
-require 'time'
+    return options, logger if InputChecker.new(options, logger).valid?
+  end
+end

@@ -11,3 +11,23 @@ end
 
 class PTY
 end if OS.windows?
+
+class TestEcho
+  def run_command(string)
+    string
+  end
+end
+
+class TestEchoCommand
+  def tf_state_file_cmd
+    'terraform init'
+  end
+
+  def tf_module_get_cmd
+    'terraform get'
+  end
+
+  def tf_action_cmd
+    'terraform plan'
+  end
+end
