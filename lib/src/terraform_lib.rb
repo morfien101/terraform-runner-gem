@@ -42,7 +42,7 @@ class TerraformRunner
     Dir.chdir working_dir
     # These are the commands that need to be run
     # Each method will handle the command that it needs to run.
-    prompt_to_destroy if @action.casecmp('destroy') && !@execute_silently
+    prompt_to_destroy if @action.downcase == 'destroy' && !@execute_silently
     run_commands
   end
 
@@ -63,9 +63,9 @@ class TerraformRunner
     FileUtils.cp_r(sc_src, working_dir, verbose: @debug)
 
     # Copy the modules to the working directory also if needed.
-    if config_file['local_modules']['enabled']
-      module_src = "#{File.expand_path(File.join(@base_dir, @config_file['local_modules']['src_path']))}/."
-      modules_dst = File.join(working_dir,@config_file['local_modules']['dst_path'])
+    if @config_file.local_modules['enabled']
+      module_src = "#{File.expand_path(File.join(@base_dir, @config_file.local_modules['src_path']))}/."
+      modules_dst = File.join(working_dir,@config_file.local_modules['dst_path'])
       @logger.debug("Ship modules to #{modules_dst}")
       FileUtils.cp_r(module_src, modules_dst, verbose: @debug)
     end
