@@ -2,7 +2,7 @@
 
 ## This repo is unmaintained. It was developed for an old version of terraform which didn't have these features.
 
-Consider using naked Terraform or (Gruntwork - Terragrunt)[https://github.com/gruntwork-io/terragrunt] if you still have issues with Terraform.
+Consider using naked Terraform or [Gruntwork - Terragrunt](https://github.com/gruntwork-io/terragrunt) if you still have issues with Terraform.
 
 ## Original README
 
