@@ -1,6 +1,6 @@
 # terraform-runner-gem
 
-## This repo is unmaintained. It was developed for a old version of terraform which didn't have these features.
+## This repo is unmaintained. It was developed for an old version of terraform which didn't have these features.
 
 Consider using naked Terraform or (Gruntwork - Terragrunt)[https://github.com/gruntwork-io/terragrunt] if you still have issues with Terraform.
 
